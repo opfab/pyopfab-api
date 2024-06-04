@@ -1,2 +1,3 @@
 # pyopfab-api
-Experimentatl pyh
+
+Experimental python API to access OperatorFabric
