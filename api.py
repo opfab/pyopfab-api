@@ -1,6 +1,6 @@
 import requests
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, time
 from uuid import uuid4
 
 requests.packages.urllib3.disable_warnings()
@@ -21,6 +21,13 @@ logger = logging.getLogger(__name__)
 # https://opfab.github.io/documentation/current/api/cards/
 # https://opfab.github.io/documentation/current/api/businessconfig/
 # https://opfab.github.io/documentation/current/api/external-devices/
+
+def datetime_to_unix_ms(dt):
+    """Convert a datetime object to milliseconds since the Unix epoch."""
+    epoch = datetime.fromtimestamp(0)
+    return int((dt - epoch).total_seconds() * 1000.0)
+
+
 
 def auth(func):
     def wrapper(self, *args, **kwargs):
@@ -64,7 +71,7 @@ class RepresentativeType:
 
 
 class OperatorFabricClient:
-    def __init__(self, server_url, username, password, token_endpoint_url=None, client_id="opfab-client", client_secret=None, grant_type="password"):
+    def __init__(self, server_url, username, password, token_endpoint_url=None, client_id="opfab-client", client_secret="opfab-keycloak-secret", grant_type="password"):
         self.server_url = server_url
         self.username = username
         self.password = password
@@ -331,7 +338,7 @@ class OperatorFabricClient:
 
         logger.debug(json.dumps(query_payload, indent=4))
 
-        query_url = "/cards/cards"
+        query_url = "cardspub/cards"
         response = requests.post(f"{self.server_url}{query_url}", json=query_payload, headers=self._get_headers(), verify=False)
 
 
